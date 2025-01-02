@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { TemplateApp, WebTrafficApp } from './App'; // Import both named exports
+import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <WebTrafficApp /> {/* Replace with TemplateApp if needed */}
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
