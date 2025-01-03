@@ -1,5 +1,5 @@
-// /frontend/src/TrafficTracker.js
 import React, { useState } from 'react';
+import './index.css'; // Import CSS file
 
 const TrafficTracker = () => {
   const [url, setUrl] = useState('');
@@ -36,32 +36,38 @@ const TrafficTracker = () => {
   };
 
   return (
-    <div>
-      <h1>Traffic Tracker</h1>
+    <div className="background">
+      <div>
+        {/* Logo and Title */}
+        <div className="logo-container">
+          <img src="https://via.placeholder.com/150" alt="Logo" /> {/* Replace with your logo URL */}
+          <h1>Traffic Tracker</h1>
+        </div>
 
-      {/* Form to log traffic */}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter URL"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-        />
-        <button type="submit">Track URL</button>
-      </form>
+        {/* Form to log traffic */}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Enter URL"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+          <button type="submit">Track URL</button>
+        </form>
 
-      {/* Button to get traffic data */}
-      <button onClick={getTrafficData}>Get Traffic Data</button>
+        {/* Button to get traffic data */}
+        <button onClick={getTrafficData}>Get Traffic Data</button>
 
-      {/* Display traffic data */}
-      <h2>Traffic Data</h2>
-      <ul>
-        {trafficData.map((item, index) => (
-          <li key={index}>
-            <strong>{item.url}</strong> - {item.ip} - {new Date(item.timestamp).toLocaleString()}
-          </li>
-        ))}
-      </ul>
+        {/* Display traffic data */}
+        <h2>Traffic Data</h2>
+        <ul>
+          {trafficData.map((item, index) => (
+            <li key={index}>
+              <strong>{item.url}</strong> - {item.ip} - {new Date(item.timestamp).toLocaleString()}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

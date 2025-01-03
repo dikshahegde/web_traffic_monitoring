@@ -1,33 +1,34 @@
+require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 
+// Initialize app and middleware
 const app = express();
-const PORT = 5000;
-
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// MongoDB Connection
-const uri = 'mongodb://127.0.0.1:27017'; // MongoDB connection URI
-const client = new MongoClient(uri);
+// Load configuration from .env
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
 
+// MongoDB Connection
 let db;
-client.connect()
-  .then(() => {
-    db = client.db('webTrafficDB');
+MongoClient.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then((client) => {
+    db = client.db(); // Use the database specified in the URI
     console.log('Connected to MongoDB');
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Failed to connect to MongoDB:', err);
+    process.exit(1); // Exit the process if MongoDB connection fails
   });
 
 // Add Traffic Endpoint
 app.post('/api/addTraffic', (req, res) => {
   const { url } = req.body; // Extract the URL from the request body
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress; // Get IP address
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress; // Get the user's IP address
 
   if (!url) {
     return res.status(400).json({ error: 'URL is required.' });
@@ -35,7 +36,7 @@ app.post('/api/addTraffic', (req, res) => {
 
   const trafficData = {
     url,
-    ip: ip === '::1' ? 'localhost' : ip, // Handle localhost case
+    ip,
     timestamp: new Date(),
   };
 
@@ -44,7 +45,7 @@ app.post('/api/addTraffic', (req, res) => {
     .then(() => {
       res.status(201).json({ message: 'Traffic data added successfully.' });
     })
-    .catch(err => {
+    .catch((err) => {
       console.error('Failed to add traffic data:', err);
       res.status(500).json({ error: 'Failed to save traffic data.' });
     });
@@ -52,14 +53,8 @@ app.post('/api/addTraffic', (req, res) => {
 
 // Fetch Traffic Endpoint
 app.get('/api/getTraffic', (req, res) => {
-  const { url } = req.query; // Extract the URL from the query parameters
-
-  if (!url) {
-    return res.status(400).json({ error: 'URL is required.' });
-  }
-
   db.collection('trafficData')
-    .find({ url }) // Filter traffic by URL
+    .find()
     .sort({ timestamp: -1 }) // Sort by latest timestamp
     .toArray()
     .then((trafficData) => {
@@ -71,7 +66,7 @@ app.get('/api/getTraffic', (req, res) => {
     });
 });
 
-// Start Server
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
