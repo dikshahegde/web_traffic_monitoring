@@ -1,11 +1,11 @@
+// /frontend/src/App.js
 import React from 'react';
-import TrafficDashboard from './TrafficDashboard';
+import TrafficTracker from './TrafficTracker';
 
 const App = () => {
   return (
-    <div>
-      <h1>Real-Time Web Traffic Monitoring</h1>
-      <TrafficDashboard />
+    <div className="App">
+      <TrafficTracker />
     </div>
   );
 };
